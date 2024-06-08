@@ -24,8 +24,9 @@ Dê uma olhada nos números, tendências e histórias por trás das medalhas ol�
 df = pd.read_csv("/home/dell/Documentos/Mestrado/ProjetoVisualizacao/data/athlete_events.csv")
 
 # Remover duplicatas por país, ano e esporte, mantendo apenas uma medalha por esporte em cada ano
-df_unique = df.drop_duplicates(subset=['NOC', 'Year', 'Sport', 'Sex'])
+#df_unique = df.drop_duplicates(subset=['NOC', 'Year', 'Sport', 'Sex'])
 
+df_unique = df
 # Renomear as colunas "Sex" e "Sport"
 df_unique = df_unique.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha'})
 
