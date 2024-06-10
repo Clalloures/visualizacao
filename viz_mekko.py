@@ -2,38 +2,34 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-def plot_bar(dataframe, country):
-    # Filter data for the specified country
-    df_country = dataframe[dataframe['NOC'] == country]
-    df_country.loc[:, 'Medal'] = df_country['Medal'].replace({'Silver': 'Prata', 'Gold': 'Ouro'})
+def fill_in_years(df, unique_years):
+    # Get unique  
+    # medals
+    unique_medals = df['Medal'].unique()
 
+    # Create a new DataFrame to store the results
+    result = []
 
-    # Group by year and medal type and count the number of medals
-    medal_counts = df_country.groupby(['Year', 'Medal']).size().reset_index(name='count')
+    # Iterate over unique years and medals
+    for year in unique_years:
+        for medal in unique_medals:
+            # Check if the combination exists in the original DataFrame
+            if ((df['Year'] == year) & (df['Medal'] == medal)).any():
+                # If it exists, get the count
+                count = df[(df['Year'] == year) & (df['Medal'] == medal)]['count'].iloc[0]
+            else:
+                # If it doesn't exist, set the count to 0
+                count = 0
+            # Append the result to the new DataFrame
+            result.append({'Year': year, 'Medal': medal, 'count': count})
 
-    # Pivot the dataframe to have medal types as columns
-    medal_pivot = medal_counts.pivot(index='Year', columns='Medal', values='count').fillna(0)
-
-    # Calculate total medals per year and proportions for each medal type
-    medal_pivot['total'] = medal_pivot.sum(axis=1)
-    for medal in ['Ouro', 'Prata', 'Bronze']:
-        medal_pivot[f'Medalhas de {medal}'] = medal_pivot[medal] / medal_pivot['total']
-
-    # Create Marimekko chart
-    fig = px.bar(
-        medal_pivot.reset_index(),
-        x='Year',
-        y=['Medalhas de Ouro', 'Medalhas de Prata', 'Medalhas de Bronze'],
-        title=f'Gráfico de Barras para as medalhas - {country}',
-        labels={'value': 'Proporção de Medalhas'},
-        color_discrete_map={'Medalhas de Ouro': 'gold', 'Medalhas de Prata': 'silver', 'Medalhas de Bronze': 'rgb(166,86,40)'}
-    )
-
-    fig.update_layout(barmode='stack', xaxis={'categoryorder': 'total descending'})
-    fig.show()
+    # Convert the result list to a DataFrame
+    result_df = pd.DataFrame(result)
+    return result_df
 
 
 def plot_marimekko(dataframe, country):
+    unique_years = dataframe['Year'].unique()
     # Filter data for the specified country
     df_country = dataframe[dataframe['NOC'] == country]
     df_country.loc[:, 'Medal'] = df_country['Medal'].replace({'Silver': 'Prata', 'Gold': 'Ouro'})
@@ -41,7 +37,7 @@ def plot_marimekko(dataframe, country):
 
     # Group by year and medal type and count the number of medals
     medal_counts = df_country.groupby(['Year', 'Medal']).size().reset_index(name='count')
-
+    #medal_counts = fill_in_years(medal_counts, unique_years)
     # Pivot the dataframe to have medal types as columns
     medal_pivot = medal_counts.pivot(index='Year', columns='Medal', values='count').fillna(0)
 
@@ -69,7 +65,7 @@ def plot_marimekko(dataframe, country):
         y=medal_pivot['Medalhas de Bronze'],
         width=medal_pivot['width'],
         base=0,
-        marker=dict(color='rgb(166,86,40)'),
+        marker=dict(color='#cd7f32'),
         name='Bronze',
         customdata=medal_pivot['total'],
         hovertemplate='Year: %{x}<br>Total de Medalhas: %{customdata}<br>Proporção de Bronzes: %{y:.2f}<extra></extra>',
@@ -81,7 +77,7 @@ def plot_marimekko(dataframe, country):
         y=medal_pivot['Medalhas de Prata'],
         width=medal_pivot['width'],
         base=medal_pivot['Medalhas de Bronze'],
-        marker=dict(color='silver'),
+        marker=dict(color='#c0c0c0'),
         name='Prata',
         customdata=medal_pivot['total'],
         hovertemplate='Year: %{x}<br>Total de Medalhas: %{customdata}<br>Proporção de Pratas: %{y:.2f}<extra></extra>',
@@ -93,7 +89,7 @@ def plot_marimekko(dataframe, country):
         y=medal_pivot['Medalhas de Ouro'],
         width=medal_pivot['width'],
         base=medal_pivot['Medalhas de Bronze'] + medal_pivot['Medalhas de Prata'],
-        marker=dict(color='gold'),
+        marker=dict(color='#ffd700'),
         name='Ouro',
         customdata=medal_pivot['total'],
         hovertemplate='Year: %{x}<br>Total de Medalhas: %{customdata}<br>Proporção de Ouros: %{y:.2f}<extra></extra>',
