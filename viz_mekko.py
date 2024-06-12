@@ -98,5 +98,4 @@ def plot_marimekko(dataframe, country):
         #width=1500,  # Set figure width
         #height=600,  # Set figure height
     )
-
-    fig.show(renderer='notebook_connected')
+    return fig
