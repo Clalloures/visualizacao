@@ -3,8 +3,9 @@ import plotly.express as px
 import streamlit as st
 import plotly.graph_objects as go
 
+st.set_page_config(layout="wide")
 # Título e texto introdutório
-st.title("Análise Visual das Medalhas Olímpicas")
+st.title("Análise da Participação nos Jogos")
 st.write("""
 Bem-vindo à nossa plataforma de visualização das conquistas olímpicas ao longo dos anos! Os Jogos Olímpicos são um momento de celebração global do espírito esportivo, excelência e união. Aqui, você pode explorar estatísticas detalhadas sobre as medalhas conquistadas pelos atletas de diferentes países em várias temporadas.
 
@@ -57,13 +58,7 @@ def get_medal_count(filtered_df):
     ).reset_index()
     return medal_count
 
-# preenche os anos na base
-def fill_in_years(df, unique_years):
-    # Ensure all years are represented in the dataframe, even if there are no medals
-    all_years = pd.DataFrame({'Ano': unique_years})
-    return pd.merge(all_years, df, on='Ano', how='left').fillna(0)
-
-def plot_participation_bar(df):
+def create_part_df(df):
     olympic_years = df['Ano'].unique()
     olympic_years_df = pd.DataFrame(olympic_years, columns=['Ano'])
 
@@ -88,8 +83,17 @@ def plot_participation_bar(df):
     # Filter out the non-participated rows
     participation_df = result_df[result_df['Participated'] == 1]
 
+    return participation_df
+
+# preenche os anos na base
+def fill_in_years(df, unique_years):
+    # Ensure all years are represented in the dataframe, even if there are no medals
+    all_years = pd.DataFrame({'Ano': unique_years})
+    return pd.merge(all_years, df, on='Ano', how='left').fillna(0)
+
+def plot_participation_bar(df):
     # Count the number of participants per year per NOC
-    participation_count_df = participation_df.groupby(['Ano', 'NOC']).size().reset_index(name='Count')
+    participation_count_df = df.groupby(['Ano', 'NOC']).size().reset_index(name='Count')
 
     # Create the stacked bar chart
     fig = px.bar(participation_count_df, x='Ano', y='Count', color='NOC', title='Participação Olímpica por Ano e País', 
@@ -115,6 +119,19 @@ def plot_participation_bar(df):
     # Show the figure
     return fig
 
+def plot_participation_map(df):
+    df['Participated'] = df['Participated'].map({1: 'Sim', 0: 'Não'})
+    df = df.rename({'Participated': 'Participação', 'NOC': 'País'}, axis=1)
+    df = df.sort_values(by='Ano')
+    fig = px.choropleth(df, 
+                        locations="País",
+                        color="Participação",
+                        hover_name="País",
+                        title=f'Países Participantes das Olimpíadas',
+                        animation_frame='Ano',
+                        color_discrete_map={'Sim': 'red', 'Não': 'grey'}
+                        )  # Escolha uma escala de cores adequada
+    return fig
 # Seleção de temporada pelo usuário
 season = st.selectbox(
     "Selecione a temporada para visualização:",
@@ -129,6 +146,20 @@ gender = st.selectbox(
     index=0  # Definindo "Ambos" como padrão
 )
 
+# Filtrar os dados com base na seleção do usuário
+filtered_df = filter_data(season, gender)
+part_df = create_part_df(filtered_df)
+
+# Plotar mapa de participação
+fig2 = plot_participation_map(part_df)
+st.plotly_chart(fig2)
+
+# Plotar tabela de participação
+sum_df = part_df.groupby('NOC').count().reset_index().drop('Ano', axis=1)
+sum_df = sum_df.rename({'Participated': 'Participações', 'NOC': 'País'}, axis=1)
+sum_df = sum_df.sort_values(by='Participações', ascending=False).reset_index().drop('index', axis=1)
+sum_df.index += 1
+st.subheader('Participações por país ao longo do tempo')
 # Seleção de país pelo usuário
 selected_country = st.multiselect(
     "Selecione um ou mais países:",
@@ -136,16 +167,15 @@ selected_country = st.multiselect(
   default=None,
   placeholder='Todos'
 )
-# Filtrar os dados com base na seleção do usuário
-if selected_country == []:
-    filtered_df = filter_data(season, gender)
+
+if selected_country != []:
+    filtered_df_c = part_df[part_df['NOC'].isin(selected_country)]
 else:
-    filtered_df = filter_data(season, gender)
-    filtered_df = filtered_df[filtered_df['NOC'].isin(selected_country)]
-
+    filtered_df_c = part_df
 # Criando o gráfico de barras
-fig = plot_participation_bar(filtered_df)
-
+fig = plot_participation_bar(filtered_df_c)
 # Exibir o gráfico de barras
 st.plotly_chart(fig)
 
+st.subheader('*Países com maior número de participações nos Jogos Olímpicos:*')
+st.write(sum_df)
