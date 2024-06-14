@@ -2,6 +2,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+
+st.set_page_config(layout="wide")
 # função para pegar a quantidade de cada medalha de um atleta em um ano
 def update_medal_counts(group):
     group = group.sort_values('Year')
@@ -43,6 +45,32 @@ def filter_data(season, gender, sport):
     
     return filtered_df
 
+def line_chart_prep(df_filtred):
+    filtred_sorted_gruped = df_filtred.groupby(['Year', 'Name'])[['Bronze', 'Silver', 'Gold', 'Total Medal','Esporte']].max().reset_index()
+    filtred_sorted_gruped['Total Medal'] = (filtred_sorted_gruped['Bronze'] * 1) + (filtred_sorted_gruped['Silver'] * 2) + (filtred_sorted_gruped['Gold'] * 3)
+    filtred_sorted_gruped = filtred_sorted_gruped.sort_values(by='Total Medal', ascending=False)
+    top10_names = filtred_sorted_gruped['Name'].unique()[:10]
+    filtred_sorted_gruped_top10 = filtred_sorted_gruped[filtred_sorted_gruped['Name'].isin(top10_names)]
+    # filtred_sorted_gruped_top10 = filtred_sorted_gruped_top10.sort_values('Total Medal')
+    return filtred_sorted_gruped_top10
+
+def plot_line_chart_athlete_medals(df):
+    fig = px.line(df, x='Year', y='Total Medal', color='Name',
+            title='Histórico dos top 10 medalhistas',
+            labels={'Year': 'Ano', 'Total Medal': 'Medalhas'},
+            custom_data=['Bronze', 'Silver', 'Gold','Esporte'],
+            markers=True,)
+
+    fig.update_traces(hovertemplate='<b>%{x}</b><br>Bronze: %{customdata[0]}<br>Prata: %{customdata[1]}<br>Ouro: %{customdata[2]}<br>Sport: %{customdata[3]}<br>Total Medals: %{y}')
+    fig.update_layout(title_x=0.5,plot_bgcolor='white', paper_bgcolor='white')
+    min_year = df['Year'].min()
+    max_year = df['Year'].max()
+    x_tick_values = list(range(min_year, max_year + 1, 4))
+    y_tick_values = list(range(0, int(df['Total Medal'].max()) + 4, int(df['Total Medal'].max()/5)))
+    fig.update_xaxes(tickvals=x_tick_values,gridcolor='lightgrey')
+    fig.update_yaxes(tickvals=y_tick_values,gridcolor='lightgrey')
+    return fig
+
 def bar_chart_prep(df_filtred):
     filtred_sorted = df_filtred.sort_values('Total Medal')
     filtred_sorted_gruped = filtred_sorted.groupby('Name')[['Bronze', 'Silver', 'Gold','Total Medal']].max().reset_index()
@@ -60,7 +88,7 @@ def bar_chart_prep(df_filtred):
 def plot_bar_chart_athlete_medals(df):
     tick_values_y = list(range(0, int(df['Total Medal'].max()) + 5, int(df['Total Medal'].max()/5)))
     fig = px.bar(df, x='Name', y=['Quantidade Bronze', 'Quantidade Prata', 'Quantidade Ouro'],
-                    title='Maiores medalhista da história',
+                    title='Maiores medalhistas da história',
                     labels={'Name': 'Atleta', 'value': 'Medalhas'},
                     color_discrete_sequence=['#cd7f32', '#c0c0c0', '#ffd700'],
                     barmode='stack',
@@ -102,6 +130,12 @@ sport = st.selectbox(
 
 # Filtrar os dados com base na seleção do usuário
 filtred_df = filter_data(season, gender, sport)
+line_chart_df = line_chart_prep(filtred_df)
+
+fig = plot_line_chart_athlete_medals(line_chart_df)
+st.plotly_chart(fig)
+
+
 bar_chart_df = bar_chart_prep(filtred_df)
 
 fig = plot_bar_chart_athlete_medals(bar_chart_df)
