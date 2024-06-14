@@ -27,10 +27,80 @@ df = pd.read_csv("../athlete_events.csv")
 
 # Remover duplicatas por país, ano e esporte, mantendo apenas uma medalha por esporte em cada ano
 #df_unique = df.drop_duplicates(subset=['NOC', 'Year', 'Sport', 'Sex'])
+# Dicionário de traduções
+traducoes = {
+    'Basketball': 'Basquete',
+    'Judo': 'Judô',
+    'Football': 'Futebol',
+    'Tug-Of-War': 'Cabo de Guerra',
+    'Speed Skating': 'Patinação de Velocidade',
+    'Cross Country Skiing': 'Esqui Cross-Country',
+    'Athletics': 'Atletismo',
+    'Ice Hockey': 'Hóquei no Gelo',
+    'Swimming': 'Natação',
+    'Badminton': 'Badminton',
+    'Sailing': 'Vela',
+    'Biathlon': 'Biatlo',
+    'Gymnastics': 'Ginástica',
+    'Art Competitions': 'Competições de Arte',
+    'Alpine Skiing': 'Esqui Alpino',
+    'Handball': 'Handebol',
+    'Weightlifting': 'Levantamento de Peso',
+    'Wrestling': 'Luta',
+    'Luge': 'Luge',
+    'Water Polo': 'Pólo Aquático',
+    'Hockey': 'Hóquei',
+    'Rowing': 'Remo',
+    'Bobsleigh': 'Bobsled',
+    'Fencing': 'Esgrima',
+    'Equestrianism': 'Hipismo',
+    'Shooting': 'Tiro',
+    'Boxing': 'Boxe',
+    'Taekwondo': 'Taekwondo',
+    'Cycling': 'Ciclismo',
+    'Diving': 'Saltos Ornamentais',
+    'Canoeing': 'Canoagem',
+    'Tennis': 'Tênis',
+    'Modern Pentathlon': 'Pentatlo Moderno',
+    'Figure Skating': 'Patinação Artística',
+    'Golf': 'Golfe',
+    'Softball': 'Softbol',
+    'Archery': 'Tiro com Arco',
+    'Volleyball': 'Voleibol',
+    'Synchronized Swimming': 'Nado Sincronizado',
+    'Table Tennis': 'Tênis de Mesa',
+    'Nordic Combined': 'Combinado Nórdico',
+    'Baseball': 'Beisebol',
+    'Rhythmic Gymnastics': 'Ginástica Rítmica',
+    'Freestyle Skiing': 'Esqui Estilo Livre',
+    'Rugby Sevens': 'Rugby de Sete',
+    'Trampolining': 'Ginástica de Trampolim',
+    'Beach Volleyball': 'Vôlei de Praia',
+    'Triathlon': 'Triatlo',
+    'Ski Jumping': 'Salto de Esqui',
+    'Curling': 'Curling',
+    'Snowboarding': 'Snowboard',
+    'Rugby': 'Rugby',
+    'Short Track Speed Skating': 'Patinação de Velocidade em Pista Curta',
+    'Skeleton': 'Skeleton',
+    'Lacrosse': 'Lacrosse',
+    'Polo': 'Pólo',
+    'Cricket': 'Críquete',
+    'Racquets': 'Raquetes',
+    'Motorboating': 'Motonáutica',
+    'Military Ski Patrol': 'Patrulha Militar de Esqui',
+    'Croquet': 'Croquet',
+    'Jeu De Paume': 'Jeu De Paume',
+    'Roque': 'Roque',
+    'Alpinism': 'Alpinismo',
+    'Basque Pelota': 'Pelota Basca',
+    'Aeronautics': 'Aeronáutica'
+}
+# Mapping the dictionary to the DataFrame column
+df['Sport'] = df['Sport'].map(traducoes)
 
-df_unique = df
 # Renomear as colunas "Sex" e "Sport"
-df_unique = df_unique.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha', 'Year': 'Ano'})
+df_unique = df.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha', 'Year': 'Ano'})
 
 # Função para filtrar os dados com base na temporada e gênero
 def filter_data(season, gender):
@@ -44,6 +114,9 @@ def filter_data(season, gender):
     
     if gender != 'Ambos':
         filtered_df = filtered_df[filtered_df['Gênero'] == gender_map[gender]]
+
+    if sport != 'Todos':
+        filtered_df = filtered_df[filtered_df['Esporte'] == sport]
     
     return filtered_df
 
@@ -146,6 +219,16 @@ gender = st.selectbox(
     index=0  # Definindo "Ambos" como padrão
 )
 
+# Seleção de esporte pelo usuário
+sports = df_unique['Esporte'].unique().tolist()
+sports.sort()
+sports.insert(0, 'Todos')  # Adicionando a opção "Todos"
+sport = st.selectbox(
+    "Selecione o esporte para visualização:",
+    sports,
+    index=0  # Definindo "Todos" como padrão
+)
+
 # Filtrar os dados com base na seleção do usuário
 filtered_df = filter_data(season, gender)
 part_df = create_part_df(filtered_df)
@@ -178,4 +261,6 @@ fig = plot_participation_bar(filtered_df_c)
 st.plotly_chart(fig)
 
 st.subheader('*Países com maior número de participações nos Jogos Olímpicos:*')
+st.write('*Filtros ativos:*')
+st.write(f'Temporada: {season}   |   Gênero: {gender}   |   Esporte: {sport}')
 st.write(sum_df)
