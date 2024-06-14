@@ -6,7 +6,7 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.write("# Dados dos Jogos Plímpicos👋")
+st.write("# Dados dos Jogos Olímpicos👋")
 
 st.sidebar.success("Escolha uma das visualizações na barra ao lado.")
 
