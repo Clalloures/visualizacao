@@ -14,19 +14,19 @@ st.markdown(
     """
     Projeto desenvolvido para a matéria de Visualização de Dados.
 
-    Autores:
+    *Autores:*
 
     Clarissa Lima Loures
 
     Giovanna Paranhos Mendes Assis
 
     Henrique Colonese Echternacht
-    
+
     Victor Brito Quinino
 """
 )
 st.write("""
-Bem-vindo à nossa plataforma de visualização das conquistas olímpicas ao longo dos anos! Os Jogos Olímpicos são um momento de celebração global do espírito esportivo, excelência e união. Aqui, você pode explorar estatísticas detalhadas sobre as medalhas conquistadas pelos atletas de diferentes países em várias temporadas.
+*Bem-vindo à nossa plataforma de visualização das conquistas olímpicas ao longo dos anos! Os Jogos Olímpicos são um momento de celebração global do espírito esportivo, excelência e união. Aqui, você pode explorar estatísticas detalhadas sobre as medalhas conquistadas pelos atletas de diferentes países em várias temporadas.*
 
 **O que esperar:**
 
