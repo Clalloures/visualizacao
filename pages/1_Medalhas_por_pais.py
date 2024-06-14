@@ -14,7 +14,7 @@ Bem-vindo à nossa plataforma de visualização das conquistas olímpicas ao lon
    
 2. **Exploração Detalhada:** Analise o desempenho de um país específico ao longo dos anos, ou compare múltiplos países para uma visão mais ampla.
 
-3. **Gráficos Interativos:** Observe a distribuição de medalhas de ouro, prata e bronze ao longo dos anos com gráficos de barras dinâmicos e informativos.
+3. **Gráficos Interativos:** Observe a distribuição de medalhas de ouro, prata e bronze ao longo dos anos com gráficos de barras do tipo Marimekko dinâmicos e informativos.
 
 4. **Tabelas Informativas:** Acompanhe a contagem detalhada de medalhas por ano e explore os detalhes das medalhas conquistadas por um país selecionado.
 
