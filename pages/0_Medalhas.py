@@ -183,7 +183,7 @@ all_countries = df[['País', 'NOC']].drop_duplicates()
 
 # Mesclar medal_count com all_countries para garantir que todos os países estejam presentes
 medal_count_all = pd.merge(all_countries, medal_count, on="País", how="left").fillna(0)
-
+medal_count_all = medal_count_all.sort_values(by='Ano')
 # Criar o gráfico cloropleth
 fig = px.choropleth(medal_count_all, 
                     locations="NOC",
