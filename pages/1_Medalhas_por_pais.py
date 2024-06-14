@@ -94,8 +94,10 @@ def plot_marimekko(dataframe, country):
 
     # Compute the x positions for bars to ensure they are properly centered
     bar_width = 1 / len(unique_years)  # Adjust bar width to fit the number of years
-    padding = 0.1  # Padding between bars
-
+    if len(unique_years) < 20 or total_medals < 10:
+        padding = len(unique_years)/30  # Padding between bars
+    else: 
+        padding = 0.1
     x_positions = [i * (bar_width + padding) for i in range(len(unique_years))]
     medal_pivot['x'] = x_positions
 
