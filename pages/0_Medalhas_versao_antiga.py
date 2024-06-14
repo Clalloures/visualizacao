@@ -3,7 +3,7 @@ import plotly.express as px
 import streamlit as st
 
 # Carregar os dados
-df = pd.read_csv("/home/dell/Documentos/Mestrado/ProjetoVisualizacao/data/athlete_events.csv")
+df = pd.read_csv("../athlete_events.csv")
 
 # Remover duplicatas por país, ano e esporte, mantendo apenas uma medalha por esporte em cada ano
 #df_unique = df.drop_duplicates(subset=['NOC', 'Year', 'Sport', 'Sex'])
