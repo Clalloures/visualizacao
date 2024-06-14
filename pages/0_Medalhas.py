@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
 # Carregar os dados
-df = pd.read_csv("../athlete_events.csv")
+df = pd.read_csv("athlete_events_pt.csv")
 
 # Remover duplicatas por país, ano e esporte, mantendo apenas uma medalha por esporte em cada ano
 
@@ -33,7 +33,7 @@ def filter_data(season, gender, sport='Todos'):
 
 # Função para agrupar e contar as medalhas
 def get_medal_count(filtered_df):
-    grouped_df = filtered_df.groupby(['NOC', 'Ano'])
+    grouped_df = filtered_df.groupby(['País', 'Ano'])
     medal_count = grouped_df.agg(
         total_medals=('Medalha', 'count')
     ).reset_index()
@@ -54,7 +54,7 @@ def fill_in_years(df, unique_years):
 def plot_marimekko(dataframe, country):
     unique_years = sorted(dataframe['Ano'].unique())  # Ensure unique_years are sorted
     # Filter data for the specified country
-    df_country = dataframe[dataframe['NOC'] == country]
+    df_country = dataframe[dataframe['País'] == country]
     df_country.loc[:, 'Medalha'] = df_country['Medalha'].replace({'Silver': 'Prata', 'Gold': 'Ouro'})
 
     # Group by year and medal type and count the number of medals
@@ -179,37 +179,16 @@ filtered_df = filter_data(season, gender, sport)
 medal_count = get_medal_count(filtered_df)
 detailed_medal_info = get_detailed_medal_info(filtered_df)
 
-all_countries = pd.DataFrame({"NOC": 
-                              ["AFG", "ALB", "ALG", "AND", "ANG", "ANT", "ARG", "ARM", "ARU", "ASA", 
-                               "AUS", "AUT", "AZE", "BAH", "BAN", "BAR", "BDI", "BEL", "BEN", "BER", 
-                               "BHU", "BIH", "BIZ", "BLR", "BOL", "BOT", "BRA", "BRN", "BRU", "BUL", 
-                               "BUR", "CAF", "CAM", "CAN", "CAY", "CGO", "CHA", "CHI", "CHN", "CIV", 
-                               "CMR", "COD", "COK", "COL", "COM", "CPV", "CRC", "CRO", "CUB", "CYP", 
-                               "CZE", "DEN", "DJI", "DMA", "DOM", "ECU", "EGY", "ERI", "ESA", "ESP", 
-                               "EST", "ETH", "FIJ", "FIN", "FRA", "FSM", "GAB", "GAM", "GBR", "GBS", 
-                               "GEO", "GEQ", "GER", "GHA", "GRE", "GRN", "GUA", "GUI", "GUM", "GUY", 
-                               "HAI", "HKG", "HON", "HUN", "INA", "IND", "IOA", "IRI", "IRL", "IRQ", 
-                               "ISL", "ISR", "ISV", "ITA", "IVB", "JAM", "JOR", "JPN", "KAZ", "KEN", 
-                               "KGZ", "KIR", "KOR", "KOS", "KSA", "KUW", "LAO", "LAT", "LBA", "LBN", 
-                               "LBR", "LCA", "LES", "LIE", "LTU", "LUX", "MAD", "MAR", "MAS", "MAW", 
-                               "MDA", "MDV", "MEX", "MGL", "MHL", "MKD", "MLI", "MLT", "MNE", "MON", 
-                               "MOZ", "MRI", "MTN", "MYA", "NAM", "NCA", "NED", "NEP", "NGR", "NIG", 
-                               "NOR", "NRU", "NZL", "OMA", "PAK", "PAN", "PAR", "PER", "PHI", "PLE", 
-                               "PLW", "PNG", "POL", "POR", "PRK", "PUR", "QAT", "ROU", "RSA", "RUS", 
-                               "RWA", "SAM", "SEN", "SEY", "SGP", "SKN", "SLE", "SLO", "SMR", "SOL", 
-                               "SOM", "SRB", "SRI", "SSD", "STP", "SUD", "SUI", "SUR", "SVK", "SWE", 
-                               "SWZ", "SYR", "TAN", "TGA", "THA", "TJK", "TKM", "TLS", "TOG", "TPE", 
-                               "TTO", "TUN", "TUR", "TUV", "UAE", "UGA", "UKR", "URU", "USA", "UZB", 
-                               "VAN", "VAT", "VEN", "VIE", "VIN", "YEM", "ZAM", "ZIM"]})
+all_countries = df[['País', 'NOC']].drop_duplicates()
 
 # Mesclar medal_count com all_countries para garantir que todos os países estejam presentes
-medal_count_all = pd.merge(all_countries, medal_count, on="NOC", how="left").fillna(0)
+medal_count_all = pd.merge(all_countries, medal_count, on="País", how="left").fillna(0)
 
 # Criar o gráfico cloropleth
 fig = px.choropleth(medal_count_all, 
                     locations="NOC",
                     color="total_medals",
-                    hover_name="NOC",
+                    hover_name="País",
                     hover_data=['total_medals'],
                     title=f'Total de Medalhas por País ({season})',
                     animation_frame='Ano',
@@ -225,7 +204,7 @@ fig.update_traces(marker_opacity=0.8)  # Opacidade dos países com medalhas
 st.plotly_chart(fig)
 
 # Ordenar a tabela de quantidade total de medalhas por país pelo ano
-medal_count_sorted = medal_count.sort_values(by='Ano')
+medal_count_sorted = medal_count.sort_values(by='Ano').reset_index().drop('index', axis=1)
 
 # Botões para ordenação da tabela de quantidade total de medalhas por país
 st.subheader(f"Quantidade Total de Medalhas por País ({season})")
@@ -234,17 +213,17 @@ order_by_year_button = st.checkbox('Ordenar por ano (Países)', key='order_by_ye
 
 # Ordenar a tabela conforme os botões selecionados
 if order_by_medals_button:
-    medal_count_sorted = medal_count_sorted.sort_values(by='total_medals', ascending=False)
-
+    medal_count_sorted = medal_count_sorted.sort_values(by='total_medals', ascending=False).reset_index().drop('index', axis=1)
 if order_by_year_button:
-    medal_count_sorted = medal_count_sorted.sort_values(by='Ano')
+    medal_count_sorted = medal_count_sorted.sort_values(by='Ano').reset_index().drop('index', axis=1)
+medal_count_sorted.index += 1
 
 # Adicionando a coluna "Temporada" à tabela de quantidade total de medalhas por país
 medal_count_sorted_with_season = medal_count_sorted.copy()
 medal_count_sorted_with_season['Temporada'] = season
 
 # Tabela de quantidade total de medalhas por país
-st.write(medal_count_sorted_with_season.rename(columns={'total_medals': 'Quantidade Medalhas', 'Ano': 'Ano'}).astype({'Ano': int}))
+st.write(medal_count_sorted_with_season.rename(columns={'total_medals': 'Quantidade Medalhas', 'Ano': 'Ano'}).astype({'Ano': str}))
 
 
 # --------------------------------------------------------
@@ -257,28 +236,28 @@ order_by_year_button_detailed = st.checkbox('Ordenar por ano (Detalhes)', key='o
 # Ordenar a tabela conforme os botões selecionados
 detailed_medal_info_sorted = detailed_medal_info
 if order_by_medals_button_detailed:
-    detailed_medal_info_sorted = detailed_medal_info_sorted.sort_values(by='count', ascending=False)
+    detailed_medal_info_sorted = detailed_medal_info_sorted.sort_values(by='count', ascending=False).reset_index().drop('index', axis=1)
 
 if order_by_year_button_detailed:
-    detailed_medal_info_sorted = detailed_medal_info_sorted.sort_values(by='Ano')
-
+    detailed_medal_info_sorted = detailed_medal_info_sorted.sort_values(by='Ano').reset_index().drop('index', axis=1)
+detailed_medal_info_sorted.index += 1
 # Adicionando a coluna "Temporada" à tabela de detalhes das medalhas
 detailed_medal_info_sorted_with_season = detailed_medal_info_sorted.copy()
 detailed_medal_info_sorted_with_season['Temporada'] = season
 
 # Tabela de detalhes das medalhas por país, ano, esporte e gênero
-st.write(detailed_medal_info_sorted_with_season.rename(columns={'count': 'Quantidade Medalhas', 'Ano': 'Ano'}).astype({'Ano': int}))
+st.write(detailed_medal_info_sorted_with_season.rename(columns={'count': 'Quantidade Medalhas', 'Ano': 'Ano'}).astype({'Ano': str}))
 
 st.subheader('Evolução das medalhas por país')
 # Seleção de país pelo usuário
 selected_country2 = st.selectbox(
     "Selecione um país:",
-    sorted(df_unique['NOC'].unique().tolist()),
+    sorted(df_unique['País'].unique().tolist()),
     index=0
 )
 
 filtered_df2 = filter_data(season, gender)
-filtered_df2 = filtered_df2[filtered_df2['NOC'] == selected_country2]
+filtered_df2 = filtered_df2[filtered_df2['País'] == selected_country2]
 
 # Criando o gráfico de barras
 fig = plot_marimekko(filtered_df2, selected_country2)
