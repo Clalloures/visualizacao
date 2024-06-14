@@ -102,7 +102,7 @@ def plot_bar_chart_athlete_medals(df):
     return fig
 
 # Carregar os dados
-df = pd.read_csv("athlete_events.csv")
+df = pd.read_csv("athlete_events_pt.csv")
 
 df_unique = load_data_grouped(df)
 
@@ -122,6 +122,7 @@ gender = st.selectbox(
 
 # Seleção de esporte pelo usuário
 sports = df_unique['Esporte'].unique().tolist()
+sports.sort()
 sports.insert(0, 'Todos')  # Adicionando a opção "Todos"
 sport = st.selectbox(
     "Selecione o esporte para visualização:",
