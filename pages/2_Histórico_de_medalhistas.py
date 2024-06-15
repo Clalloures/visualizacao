@@ -55,8 +55,16 @@ def line_chart_prep(df_filtred):
     return filtred_sorted_gruped_top10
 
 def plot_line_chart_athlete_medals(df):
+
+    title='Histórico dos top 10 medalhistas'
+    if season != 'Ambas':
+        title += f' - Jogos de {season}'
+    if sport != 'Todos':
+        title+=f' - {sport}'
+    if gender != 'Ambos':
+        title+=f' - {gender}'
     fig = px.line(df, x='Year', y='Total Medal', color='Name',
-            title='Histórico dos top 10 medalhistas',
+            title=title,
             labels={'Year': 'Ano', 'Total Medal': 'Medalhas'},
             custom_data=['Bronze', 'Silver', 'Gold','Esporte'],
             markers=True,)
@@ -87,8 +95,15 @@ def bar_chart_prep(df_filtred):
 
 def plot_bar_chart_athlete_medals(df):
     tick_values_y = list(range(0, int(df['Total Medal'].max()) + 5, int(df['Total Medal'].max()/5)))
+    title='Maiores medalhistas da história'
+    if season != 'Ambas':
+        title += f' - Jogos de {season}'
+    if sport != 'Todos':
+        title+=f' - {sport}'
+    if gender != 'Ambos':
+        title+=f' - {gender}'
     fig = px.bar(df, x='Name', y=['Quantidade Bronze', 'Quantidade Prata', 'Quantidade Ouro'],
-                    title='Maiores medalhistas da história',
+                    title=title,
                     labels={'Name': 'Atleta', 'value': 'Medalhas'},
                     color_discrete_sequence=['#cd7f32', '#c0c0c0', '#ffd700'],
                     barmode='stack',

@@ -16,8 +16,8 @@ df = pd.read_csv("athlete_events_pt.csv")
 # Renomear as colunas "Sex" e "Sport"
 df_unique = df.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha', 'Year': 'Ano'})
 
-# Função para filtrar os dados com base na temporada e gênero
-def filter_data(season, gender):
+# Função para filtrar os dados com base na temporada, gênero e esporte
+def filter_data(season, gender, sport='Todos'):
     season_map = {'Verão': 'Summer', 'Inverno': 'Winter', 'Ambas': 'Ambas'}
     gender_map = {'Feminino': 'F', 'Masculino': 'M', 'Ambos': 'Ambos'}
     
@@ -28,7 +28,7 @@ def filter_data(season, gender):
     
     if gender != 'Ambos':
         filtered_df = filtered_df[filtered_df['Gênero'] == gender_map[gender]]
-
+    
     if sport != 'Todos':
         filtered_df = filtered_df[filtered_df['Esporte'] == sport]
     
@@ -83,9 +83,15 @@ def fill_in_years(df, unique_years):
 def plot_participation_bar(df):
     # Count the number of participants per year per NOC
     participation_count_df = df.groupby(['Ano', 'País']).size().reset_index(name='Count')
-
+    title='Participação Olímpica por Ano e País'
+    if season != 'Ambas':
+        title += f' - Jogos de {season}'
+    if sport != 'Todos':
+        title+=f' - {sport}'
+    if gender != 'Ambos':
+        title+=f' - {gender}'
     # Create the stacked bar chart
-    fig = px.bar(participation_count_df, x='Ano', y='Count', color='País', title='Participação Olímpica por Ano e País', 
+    fig = px.bar(participation_count_df, x='Ano', y='Count', color='País', title=title, 
                 labels={'Count': 'Número de Países Participantes'}, 
                 barmode='stack')
         # Update layout for the Marimekko chart
@@ -112,11 +118,18 @@ def plot_participation_map(df):
     df['Participated'] = df['Participated'].map({1: 'Sim', 0: 'Não'})
     df = df.rename({'Participated': 'Participação'}, axis=1)
     df = df.sort_values(by='Ano')
+    title='Países Participantes das Olimpíadas'
+    if season != 'Ambas':
+        title += f' - Jogos de {season}'
+    if sport != 'Todos':
+        title+=f' - {sport}'
+    if gender != 'Ambos':
+        title+=f' - {gender}'
     fig = px.choropleth(df, 
                         locations="NOC",
                         color="Participação",
                         hover_name="País",
-                        title='Países Participantes das Olimpíadas',
+                        title=title,
                         animation_frame='Ano',
                         color_discrete_map={'Sim': 'red', 'Não': 'grey'}
                         )  # Escolha uma escala de cores adequada
@@ -146,7 +159,7 @@ sport = st.selectbox(
 )
 
 # Filtrar os dados com base na seleção do usuário
-filtered_df = filter_data(season, gender)
+filtered_df = filter_data(season, gender, sport)
 part_df = create_part_df(filtered_df)
 
 # Plotar mapa de participação

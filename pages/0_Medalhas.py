@@ -125,10 +125,17 @@ def plot_marimekko(dataframe, country):
         textfont=dict(size=12),  # Set consistent text size
         hovertemplate='Year: %{x}<br>Medalhas de Ouro: %{customdata:.0f}<br>Proporção de Ouros: %{y:.2f}<extra></extra>',
     ))
-
+    # create title
+    title=f'Proporção de Medalhas - {country}'
+    if season != 'Ambas':
+        title += f' - Jogos de {season}'
+    if sport != 'Todos':
+        title+=f' - {sport}'
+    if gender != 'Ambos':
+        title+=f' - {gender}'
     # Update layout for the Marimekko chart
     fig.update_layout(
-        title=f'Proporção de Medalhas - {country}',
+        title=title,
         barmode='stack',
         xaxis=dict(
             title='Ano',
@@ -184,13 +191,22 @@ all_countries = df[['País', 'NOC']].drop_duplicates()
 # Mesclar medal_count com all_countries para garantir que todos os países estejam presentes
 medal_count_all = pd.merge(all_countries, medal_count, on="País", how="left").fillna(0)
 medal_count_all = medal_count_all.sort_values(by='Ano')
+
+# criar o título
+title='Total de Medalhas por País'
+if season != 'Ambas':
+        title += f' - Jogos de {season}'
+if sport != 'Todos':
+    title+=f' - {sport}'
+if gender != 'Ambos':
+    title+=f' - {gender}'
 # Criar o gráfico cloropleth
 fig = px.choropleth(medal_count_all, 
                     locations="NOC",
                     color="total_medals",
                     hover_name="País",
                     hover_data=['total_medals'],
-                    title=f'Total de Medalhas por País ({season})',
+                    title=title,
                     animation_frame='Ano',
                     color_continuous_scale=px.colors.sequential.Blues)  # Escolha uma escala de cores adequada
 
