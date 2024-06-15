@@ -41,7 +41,7 @@ def get_medal_count(filtered_df):
 
 # Função para calcular a quantidade de medalhas por esporte e ano para cada país
 def get_detailed_medal_info(filtered_df):
-    detailed_medal_count = filtered_df.groupby(['NOC', 'Ano', 'Esporte', 'Gênero']).size().reset_index(name='count')
+    detailed_medal_count = filtered_df.groupby(['NOC', 'País', 'Ano', 'Esporte', 'Gênero']).size().reset_index(name='count')
     return detailed_medal_count
 
 # preenche os anos na base
@@ -249,6 +249,9 @@ detailed_medal_info_sorted_with_season['Temporada'] = season
 st.write(detailed_medal_info_sorted_with_season.rename(columns={'count': 'Quantidade Medalhas', 'Ano': 'Ano'}).astype({'Ano': str}))
 
 st.subheader('Evolução das medalhas por país')
+st.write('*Filtros ativos:*')
+st.write(f'*Temporada*: {season}   |   *Gênero*: {gender}   |   *Esporte*: {sport}')
+
 # Seleção de país pelo usuário
 selected_country2 = st.selectbox(
     "Selecione um país:",
@@ -256,8 +259,7 @@ selected_country2 = st.selectbox(
     index=0
 )
 
-filtered_df2 = filter_data(season, gender)
-filtered_df2 = filtered_df2[filtered_df2['País'] == selected_country2]
+filtered_df2 = filtered_df[filtered_df['País'] == selected_country2]
 
 # Criando o gráfico de barras
 fig = plot_marimekko(filtered_df2, selected_country2)

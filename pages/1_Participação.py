@@ -178,5 +178,5 @@ st.plotly_chart(fig)
 
 st.subheader('*Países com maior número de participações nos Jogos Olímpicos:*')
 st.write('*Filtros ativos:*')
-st.write(f'Temporada: {season}   |   Gênero: {gender}   |   Esporte: {sport}')
+st.write(f'*Temporada*: {season}   |   *Gênero*: {gender}   |   *Esporte*: {sport}')
 st.write(sum_df.drop('NOC', axis=1))
