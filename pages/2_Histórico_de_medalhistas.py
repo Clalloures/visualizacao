@@ -74,7 +74,7 @@ def plot_line_chart_athlete_medals(df):
     min_year = df['Year'].min()
     max_year = df['Year'].max()
     x_tick_values = list(range(min_year, max_year + 1, 4))
-    y_tick_values = list(range(0, int(df['Total Medal'].max()) + 4, int(df['Total Medal'].max()/5)))
+    y_tick_values = list(range(0, int(df['Total Medal'].max()) + 4, int((df['Total Medal'].max()/5+1))))
     fig.update_xaxes(tickvals=x_tick_values,gridcolor='lightgrey')
     fig.update_yaxes(tickvals=y_tick_values,gridcolor='lightgrey')
     return fig
@@ -94,7 +94,7 @@ def bar_chart_prep(df_filtred):
     return filtred_sorted_gruped_top10
 
 def plot_bar_chart_athlete_medals(df):
-    tick_values_y = list(range(0, int(df['Total Medal'].max()) + 5, int(df['Total Medal'].max()/5)))
+    tick_values_y = list(range(0, int(df['Total Medal'].max()) + 5, int((df['Total Medal'].max()/5+1))))
     title='Maiores medalhistas da história'
     if season != 'Ambas':
         title += f' - Jogos de {season}'
