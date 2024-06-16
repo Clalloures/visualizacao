@@ -134,7 +134,8 @@ def plot_participation_map(df):
                         animation_frame='Ano',
                         color_discrete_map={'Sim': 'red', 'Não': 'grey'}
                         )  # Escolha uma escala de cores adequada
-    fig.update_layout(title_x=0.4)
+    fig.update_layout(title_x=0.4,
+                      height=800)
     return fig
 # Seleção de temporada pelo usuário
 season = st.selectbox(
