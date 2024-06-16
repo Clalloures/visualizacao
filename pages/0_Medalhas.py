@@ -153,7 +153,8 @@ def plot_marimekko(dataframe, country):
         ),
         paper_bgcolor='rgba(0,0,0,0)',  # Entire figure background
         plot_bgcolor='rgba(0,0,0,0)',
-        title_x=0.4
+        title_x=0.4,
+        height=600
     )
     return fig
 
@@ -213,7 +214,8 @@ fig = px.choropleth(medal_count_all,
 fig.update_traces(marker=dict(line=dict(color='rgb(255,255,255)', width=1)))  # Borda branca
 fig.update_traces(marker_line_color='gray', marker_line_width=0.5)  # Borda cinza
 fig.update_traces(marker_opacity=0.8)  # Opacidade dos países com medalhas
-fig.update_layout(title_x=0.4)
+fig.update_layout(title_x=0.4, 
+            height=800)
 
 
 # Exibir o gráfico de cloropleth

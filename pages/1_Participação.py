@@ -110,7 +110,8 @@ def plot_participation_bar(df):
             ),
             paper_bgcolor='rgba(0,0,0,0)',  # Entire figure background
             plot_bgcolor='rgba(0,0,0,0)',
-            title_x=0.4
+            title_x=0.4,
+            height=600
         )
     # Show the figure
     return fig
