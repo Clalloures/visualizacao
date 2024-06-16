@@ -96,7 +96,7 @@ def bar_chart_prep(df_filtred):
     filtred_sorted_gruped_top10 = filtred_sorted_gruped_top10.sort_values('Total Medal')
     return filtred_sorted_gruped_top10
 
-def plot_bar_chart_athlete_medals(df):
+def plot_bar_chart_athlete_medals(df, sport):
     tick_values_y = list(range(0, int(df['Total Medal'].max()) + 5, int((df['Total Medal'].max()/5+1))))
     title='Maiores medalhistas da história'
     if season != 'Ambas':

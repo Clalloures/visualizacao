@@ -225,7 +225,9 @@ st.plotly_chart(fig)
 medal_count_sorted = medal_count.sort_values(by='Ano').reset_index().drop('index', axis=1)
 
 # Botões para ordenação da tabela de quantidade total de medalhas por país
-st.subheader(f"Quantidade Total de Medalhas por País ({season})")
+st.subheader(f"Quantidade Total de Medalhas por País")
+st.write('*Filtros ativos:*')
+st.write(f'*Temporada*: {season}   |   *Gênero*: {gender}   |   *Esporte*: {sport}')
 order_by_medals_button = st.checkbox('Ordenar por número de medalhas (Países)', key='order_by_medals_button')
 order_by_year_button = st.checkbox('Ordenar por ano (Países)', key='order_by_year_button')
 
@@ -247,7 +249,8 @@ st.write(medal_count_sorted_with_season.rename(columns={'total_medals': 'Quantid
 # --------------------------------------------------------
 # Botões para ordenação da tabela de detalhes das medalhas
 st.subheader("Detalhes de Medalhas por País, Ano, Esporte e Gênero")
-
+st.write('*Filtros ativos:*')
+st.write(f'*Temporada*: {season}   |   *Gênero*: {gender}   |   *Esporte*: {sport}')
 order_by_medals_button_detailed = st.checkbox('Ordenar por número de medalhas (Detalhes)', key='order_by_medals_button_detailed')
 order_by_year_button_detailed = st.checkbox('Ordenar por ano (Detalhes)', key='order_by_year_button_detailed')
 
