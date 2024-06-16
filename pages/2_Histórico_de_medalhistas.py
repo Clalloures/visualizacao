@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-
+st.title('Histórico de medalhistas')
 st.set_page_config(layout="wide")
 # função para pegar a quantidade de cada medalha de um atleta em um ano
 def update_medal_counts(group):

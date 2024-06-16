@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
+st.title('Distribuição de Medalhas')
 # Carregar os dados
 df = pd.read_csv("athlete_events_pt.csv")
 
