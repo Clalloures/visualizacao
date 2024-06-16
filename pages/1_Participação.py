@@ -186,10 +186,13 @@ if selected_country != []:
     filtered_df_c = part_df[part_df['País'].isin(selected_country)]
 else:
     filtered_df_c = part_df
-# Criando o gráfico de barras
-fig = plot_participation_bar(filtered_df_c)
-# Exibir o gráfico de barras
-st.plotly_chart(fig)
+if len(filtered_df_c) == 0:
+    st.write('Nenhum dado do país para os filtros selecionados.')
+else:
+    # Criando o gráfico de barras
+    fig = plot_participation_bar(filtered_df_c)
+    # Exibir o gráfico de barras
+    st.plotly_chart(fig)
 
 st.subheader('*Países com maior número de participações nos Jogos Olímpicos:*')
 st.write('*Filtros ativos:*')
