@@ -93,7 +93,9 @@ def plot_participation_bar(df):
     # Create the stacked bar chart
     fig = px.bar(participation_count_df, x='Ano', y='Count', color='País', title=title, 
                 labels={'Count': 'Número de Países Participantes'}, 
-                barmode='stack')
+                barmode='stack', 
+                #color_discrete_sequence=px.colors.qualitative.Dark24
+                )
         # Update layout for the Marimekko chart
     fig.update_layout(
             barmode='stack',
