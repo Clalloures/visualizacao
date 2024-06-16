@@ -8,7 +8,7 @@ st.set_page_config(layout="wide")
 # Carregar os dados
 df = pd.read_csv("athlete_events_pt.csv")
 
-
+st.title('Perfil dos atletas')
 # Renomear as colunas "Sex" e "Sport"
 df_unique = df.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha', 'Year': 'Ano', 'Age': 'Idade', 'Name': 'Nome'})
 df_unique.loc[:, 'Medalha'] = df_unique['Medalha'].replace({'Silver': 'Prata', 'Gold': 'Ouro'})
@@ -99,7 +99,6 @@ fig.update_layout(
         xaxis=dict(
             title='Faixa Etária',
             tickmode='array',
-            #tickvals=formatted_intervals,
             showgrid=False,  # Hide vertical grid lines
         ),
         yaxis=dict(
@@ -108,12 +107,13 @@ fig.update_layout(
         ),
         paper_bgcolor='rgba(0,0,0,0)',  # Entire figure background
         plot_bgcolor='rgba(0,0,0,0)',
+        title_x=0.4
     )
-
+st.subheader('Medalhas por faixa etária')
 st.plotly_chart(fig)
 
 #############################
-st.subheader('*Comparação da idade média por esporte:*')
+st.subheader('Idade média por esporte')
 st.write('*Filtros ativos:*')
 st.write(f'*Temporada*: {season}   |   *Gênero*: {gender}   |   *Esporte*: {sport}')
 # Seleção de país pelo usuário

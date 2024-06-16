@@ -72,7 +72,7 @@ def plot_line_chart_athlete_medals(df, sport):
             markers=True,)
 
     fig.update_traces(hovertemplate='<b>%{x}</b><br>Bronze: %{customdata[0]}<br>Prata: %{customdata[1]}<br>Ouro: %{customdata[2]}<br>Sport: %{customdata[3]}<br>Total Medals: %{y}')
-    fig.update_layout(title_x=0.5,plot_bgcolor='white', paper_bgcolor='white')
+    fig.update_layout(title_x=0.4,plot_bgcolor='white', paper_bgcolor='white')
     min_year = df['Year'].min()
     max_year = df['Year'].max()
     x_tick_values = list(range(min_year, max_year + 1, 4))
@@ -110,7 +110,7 @@ def plot_bar_chart_athlete_medals(df, sport):
                     color_discrete_sequence=['#cd7f32', '#c0c0c0', '#ffd700'],
                     barmode='stack',
                     custom_data=['Bronze', 'Silver', 'Gold'])
-    fig.update_layout(title_x=0.5,plot_bgcolor='white', paper_bgcolor='white',legend_title_text='Medal',xaxis=dict(showgrid=True, gridcolor='lightgrey'),yaxis=dict(showgrid=True, gridcolor='lightgrey', tickvals=tick_values_y))
+    fig.update_layout(title_x=0.4,plot_bgcolor='white', paper_bgcolor='white',legend_title_text='Medal',xaxis=dict(showgrid=True, gridcolor='lightgrey'),yaxis=dict(showgrid=True, gridcolor='lightgrey', tickvals=tick_values_y))
     fig.update_traces(hovertemplate='<b>%{x}</b><br>Bronze: %{customdata[0]}<br>Prata: %{customdata[1]}<br>Ouro: %{customdata[2]}')
     fig.update_xaxes(tickangle=90)
     fig.update_layout()

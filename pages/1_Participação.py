@@ -109,9 +109,8 @@ def plot_participation_bar(df):
                 gridcolor='lightgray',
             ),
             paper_bgcolor='rgba(0,0,0,0)',  # Entire figure background
-            plot_bgcolor='rgba(0,0,0,0)'
-            #width=1500,  # Set figure width
-            #height=600,  # Set figure height
+            plot_bgcolor='rgba(0,0,0,0)',
+            title_x=0.4
         )
     # Show the figure
     return fig
@@ -135,6 +134,7 @@ def plot_participation_map(df):
                         animation_frame='Ano',
                         color_discrete_map={'Sim': 'red', 'Não': 'grey'}
                         )  # Escolha uma escala de cores adequada
+    fig.update_layout(title_x=0.4)
     return fig
 # Seleção de temporada pelo usuário
 season = st.selectbox(
