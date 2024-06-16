@@ -187,7 +187,7 @@ if selected_country != []:
 else:
     filtered_df_c = part_df
 if len(filtered_df_c) == 0:
-    st.write('Nenhum dado do país para os filtros selecionados.')
+    st.write('Nenhum dado para os filtros selecionados.')
 else:
     # Criando o gráfico de barras
     fig = plot_participation_bar(filtered_df_c)
