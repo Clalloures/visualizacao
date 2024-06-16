@@ -93,7 +93,9 @@ def plot_participation_bar(df):
     # Create the stacked bar chart
     fig = px.bar(participation_count_df, x='Ano', y='Count', color='País', title=title, 
                 labels={'Count': 'Número de Países Participantes'}, 
-                barmode='stack')
+                barmode='stack', 
+                #color_discrete_sequence=px.colors.qualitative.Dark24
+                )
         # Update layout for the Marimekko chart
     fig.update_layout(
             barmode='stack',
@@ -107,9 +109,9 @@ def plot_participation_bar(df):
                 gridcolor='lightgray',
             ),
             paper_bgcolor='rgba(0,0,0,0)',  # Entire figure background
-            plot_bgcolor='rgba(0,0,0,0)'
-            #width=1500,  # Set figure width
-            #height=600,  # Set figure height
+            plot_bgcolor='rgba(0,0,0,0)',
+            title_x=0.4,
+            height=600
         )
     # Show the figure
     return fig
@@ -133,6 +135,8 @@ def plot_participation_map(df):
                         animation_frame='Ano',
                         color_discrete_map={'Sim': 'red', 'Não': 'grey'}
                         )  # Escolha uma escala de cores adequada
+    fig.update_layout(title_x=0.4,
+                      height=800)
     return fig
 # Seleção de temporada pelo usuário
 season = st.selectbox(
@@ -184,10 +188,13 @@ if selected_country != []:
     filtered_df_c = part_df[part_df['País'].isin(selected_country)]
 else:
     filtered_df_c = part_df
-# Criando o gráfico de barras
-fig = plot_participation_bar(filtered_df_c)
-# Exibir o gráfico de barras
-st.plotly_chart(fig)
+if len(filtered_df_c) == 0:
+    st.write('Nenhum dado para os filtros selecionados.')
+else:
+    # Criando o gráfico de barras
+    fig = plot_participation_bar(filtered_df_c)
+    # Exibir o gráfico de barras
+    st.plotly_chart(fig)
 
 st.subheader('*Países com maior número de participações nos Jogos Olímpicos:*')
 st.write('*Filtros ativos:*')

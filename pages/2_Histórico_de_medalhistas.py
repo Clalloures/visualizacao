@@ -28,7 +28,7 @@ def load_data_grouped(df):
     return df
 
 # Função para filtrar os dados com base na temporada, gênero e esporte
-def filter_data(season, gender, sport):
+def filter_data(season, gender, sport, country):
     season_map = {'Verão': 'Summer', 'Inverno': 'Winter', 'Ambas': 'Ambas'}
     gender_map = {'Feminino': 'F', 'Masculino': 'M', 'Ambos': 'Ambos'}
     
@@ -40,9 +40,11 @@ def filter_data(season, gender, sport):
     if gender != 'Ambos':
         filtered_df = filtered_df[filtered_df['Gênero'] == gender_map[gender]]
     
-    if sport != 'Todos':
-        filtered_df = filtered_df[filtered_df['Esporte'] == sport]
+    if sport != []:
+        filtered_df = filtered_df[filtered_df['Esporte'].isin(sport)]
     
+    if country != []:
+        filtered_df = filtered_df[filtered_df['País'].isin(country)]
     return filtered_df
 
 def line_chart_prep(df_filtred):
@@ -54,12 +56,12 @@ def line_chart_prep(df_filtred):
     # filtred_sorted_gruped_top10 = filtred_sorted_gruped_top10.sort_values('Total Medal')
     return filtred_sorted_gruped_top10
 
-def plot_line_chart_athlete_medals(df):
+def plot_line_chart_athlete_medals(df, sport):
 
     title='Histórico dos top 10 medalhistas'
     if season != 'Ambas':
         title += f' - Jogos de {season}'
-    if sport != 'Todos':
+    if sport != []:
         title+=f' - {sport}'
     if gender != 'Ambos':
         title+=f' - {gender}'
@@ -70,7 +72,8 @@ def plot_line_chart_athlete_medals(df):
             markers=True,)
 
     fig.update_traces(hovertemplate='<b>%{x}</b><br>Bronze: %{customdata[0]}<br>Prata: %{customdata[1]}<br>Ouro: %{customdata[2]}<br>Sport: %{customdata[3]}<br>Total Medals: %{y}')
-    fig.update_layout(title_x=0.5,plot_bgcolor='white', paper_bgcolor='white')
+    fig.update_layout(title_x=0.4,plot_bgcolor='white', paper_bgcolor='white',
+            height=600)
     min_year = df['Year'].min()
     max_year = df['Year'].max()
     x_tick_values = list(range(min_year, max_year + 1, 4))
@@ -98,7 +101,7 @@ def plot_bar_chart_athlete_medals(df):
     title='Maiores medalhistas da história'
     if season != 'Ambas':
         title += f' - Jogos de {season}'
-    if sport != 'Todos':
+    if sport != []:
         title+=f' - {sport}'
     if gender != 'Ambos':
         title+=f' - {gender}'
@@ -108,10 +111,14 @@ def plot_bar_chart_athlete_medals(df):
                     color_discrete_sequence=['#cd7f32', '#c0c0c0', '#ffd700'],
                     barmode='stack',
                     custom_data=['Bronze', 'Silver', 'Gold'])
-    fig.update_layout(title_x=0.5,plot_bgcolor='white', paper_bgcolor='white',legend_title_text='Medal',xaxis=dict(showgrid=True, gridcolor='lightgrey'),yaxis=dict(showgrid=True, gridcolor='lightgrey', tickvals=tick_values_y))
+    fig.update_layout(title_x=0.4,plot_bgcolor='white', 
+                      paper_bgcolor='white',
+                      legend_title_text='Medal',
+                      xaxis=dict(showgrid=True, gridcolor='lightgrey'),
+                      yaxis=dict(showgrid=True, gridcolor='lightgrey', tickvals=tick_values_y),
+                      height=600)
     fig.update_traces(hovertemplate='<b>%{x}</b><br>Bronze: %{customdata[0]}<br>Prata: %{customdata[1]}<br>Ouro: %{customdata[2]}')
     fig.update_xaxes(tickangle=90)
-    fig.update_layout()
     fig.update_traces(showlegend=True)
 
     return fig
@@ -139,21 +146,33 @@ gender = st.selectbox(
 sports = df_unique['Esporte'].unique().tolist()
 sports.sort()
 sports.insert(0, 'Todos')  # Adicionando a opção "Todos"
-sport = st.selectbox(
-    "Selecione o esporte para visualização:",
-    sports,
-    index=0  # Definindo "Todos" como padrão
+selected_sports = st.multiselect(
+    "Selecione um ou mais esportes:",
+  sorted(df_unique['Esporte'].unique().tolist()),
+  default=None,
+  placeholder='Todos'
+)
+# Seleção de país pelo usuário
+selected_country = st.multiselect(
+    "Selecione um ou mais países:",
+  sorted(df_unique['País'].unique().tolist()),
+  default=None,
+  placeholder='Todos'
 )
 
 # Filtrar os dados com base na seleção do usuário
-filtred_df = filter_data(season, gender, sport)
-line_chart_df = line_chart_prep(filtred_df)
+filtred_df = filter_data(season, gender, selected_sports, selected_country)
 
-fig = plot_line_chart_athlete_medals(line_chart_df)
-st.plotly_chart(fig)
+if len(filtred_df) == 0:
+    st.write('Nenhum dado para os filtros selecionados.')
+else:
+    line_chart_df = line_chart_prep(filtred_df)
+
+    fig = plot_line_chart_athlete_medals(line_chart_df, selected_sports)
+    st.plotly_chart(fig)
 
 
-bar_chart_df = bar_chart_prep(filtred_df)
+    bar_chart_df = bar_chart_prep(filtred_df)
 
-fig = plot_bar_chart_athlete_medals(bar_chart_df)
-st.plotly_chart(fig)
+    fig = plot_bar_chart_athlete_medals(bar_chart_df, selected_sports)
+    st.plotly_chart(fig)
