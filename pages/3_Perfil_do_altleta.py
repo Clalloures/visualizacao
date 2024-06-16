@@ -12,7 +12,7 @@ st.title('Perfil dos atletas')
 # Renomear as colunas "Sex" e "Sport"
 df_unique = df.rename(columns={'Sex': 'Gênero', 'Sport': 'Esporte', 'Medal': 'Medalha', 'Year': 'Ano', 'Age': 'Idade', 'Name': 'Nome', 'Height': 'Altura'})
 df_unique.loc[:, 'Medalha'] = df_unique['Medalha'].replace({'Silver': 'Prata', 'Gold': 'Ouro'})
-
+df_unique.loc[:, 'Altura'] = df_unique['Altura']/100
 # Função para filtrar os dados com base na temporada, gênero e esporte
 def filter_data(season, gender, sport='Todos'):
     season_map = {'Verão': 'Summer', 'Inverno': 'Winter', 'Ambas': 'Ambas'}
